@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZaikuquanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.zaikuquan_name as zaikuquanName
+        ,a.sexdog_types as sexdogTypes
+        ,a.zaikuquan_pinzhong as zaikuquanPinzhong
+        ,a.zaikuquan_xingge as zaikuquanXingge
+        ,a.zaikuquan_photo as zaikuquanPhoto
+        ,a.yonghu_id as yonghuId
+        ,a.jieshou_time as jieshouTime
+        ,a.sfyimiao_types as sfyimiaoTypes
+        ,a.sfjueyu_types as sfjueyuTypes
+        ,a.zaikuquan_types as zaikuquanTypes
+        ,a.zaikuquan_content as zaikuquanContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZaikuquanView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_photo as yonghuPhoto
+
+        FROM zaikuquan  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test=" params.zaikuquanName != '' and params.zaikuquanName != null and params.zaikuquanName != 'null' ">
+                and a.zaikuquan_name like CONCAT('%',#{params.zaikuquanName},'%')
+            </if>
+            <if test="params.sexdogTypes != null">
+                and a.sexdog_types = #{params.sexdogTypes}
+            </if>
+            <if test=" params.zaikuquanPinzhong != '' and params.zaikuquanPinzhong != null and params.zaikuquanPinzhong != 'null' ">
+                and a.zaikuquan_pinzhong like CONCAT('%',#{params.zaikuquanPinzhong},'%')
+            </if>
+            <if test=" params.zaikuquanXingge != '' and params.zaikuquanXingge != null and params.zaikuquanXingge != 'null' ">
+                and a.zaikuquan_xingge like CONCAT('%',#{params.zaikuquanXingge},'%')
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test="params.jieshouTimeStart != null">
+                <![CDATA[  and a.jieshou_time >= #{params.jieshouTimeStart}   ]]>
+            </if>
+            <if test="params.jieshouTimeEnd != null">
+                <![CDATA[  and a.jieshou_time <= #{params.jieshouTimeEnd}   ]]>
+            </if>
+            <if test="params.sfyimiaoTypes != null">
+                and a.sfyimiao_types = #{params.sfyimiaoTypes}
+            </if>
+            <if test="params.sfjueyuTypes != null">
+                and a.sfjueyu_types = #{params.sfjueyuTypes}
+            </if>
+            <if test="params.zaikuquanTypes != null">
+                and a.zaikuquan_types = #{params.zaikuquanTypes}
+            </if>
+            <if test=" params.zaikuquanContent != '' and params.zaikuquanContent != null and params.zaikuquanContent != 'null' ">
+                and a.zaikuquan_content like CONCAT('%',#{params.zaikuquanContent},'%')
+            </if>
+
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+            <if test="params.aaaa != null">
+                and a.yonghu_id is null
+            </if>
+            <if test="params.bbbb != null">
+                and a.yonghu_id is not null
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

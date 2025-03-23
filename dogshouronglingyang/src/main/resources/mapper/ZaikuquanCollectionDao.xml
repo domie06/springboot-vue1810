@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZaikuquanCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.zaikuquan_id as zaikuquanId
+        ,a.yonghu_id as yonghuId
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZaikuquanCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,zaikuquan.zaikuquan_name as zaikuquanName
+        ,zaikuquan.sexdog_types as sexdogTypes
+        ,zaikuquan.zaikuquan_pinzhong as zaikuquanPinzhong
+        ,zaikuquan.zaikuquan_xingge as zaikuquanXingge
+        ,zaikuquan.zaikuquan_photo as zaikuquanPhoto
+        ,zaikuquan.yonghu_id as yonghuId
+        ,zaikuquan.jieshou_time as jieshouTime
+        ,zaikuquan.sfyimiao_types as sfyimiaoTypes
+        ,zaikuquan.sfjueyu_types as sfjueyuTypes
+        ,zaikuquan.zaikuquan_types as zaikuquanTypes
+        ,zaikuquan.zaikuquan_content as zaikuquanContent
+
+        FROM zaikuquan_collection  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+        left JOIN zaikuquan zaikuquan ON a.zaikuquan_id = zaikuquan.id
+
+        <where>
+            <if test="params.zaikuquanId != null">
+                and a.zaikuquan_id = #{params.zaikuquanId}
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.insertTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.insertTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.zaikuquanName != '' and params.zaikuquanName != null and params.zaikuquanName != 'null' ">
+                and zaikuquan.zaikuquan_name like CONCAT('%',#{params.zaikuquanName},'%')
+            </if>
+            <if test="params.sexdogTypes != null">
+                and zaikuquan.sexdog_types = #{params.sexdogTypes}
+            </if>
+
+            <if test=" params.zaikuquanPinzhong != '' and params.zaikuquanPinzhong != null and params.zaikuquanPinzhong != 'null' ">
+                and zaikuquan.zaikuquan_pinzhong like CONCAT('%',#{params.zaikuquanPinzhong},'%')
+            </if>
+            <if test=" params.zaikuquanXingge != '' and params.zaikuquanXingge != null and params.zaikuquanXingge != 'null' ">
+                and zaikuquan.zaikuquan_xingge like CONCAT('%',#{params.zaikuquanXingge},'%')
+            </if>
+            <if test="params.jieshouTimeStart != null ">
+                <![CDATA[  and zaikuquan.jieshou_time >= #{params.jieshouTimeStart}   ]]>
+            </if>
+            <if test="params.jieshouTimeEnd != null ">
+                <![CDATA[  and zaikuquan.jieshou_time <= #{params.jieshouTimeEnd}   ]]>
+            </if>
+            <if test="params.sfyimiaoTypes != null">
+                and zaikuquan.sfyimiao_types = #{params.sfyimiaoTypes}
+            </if>
+
+            <if test="params.sfjueyuTypes != null">
+                and zaikuquan.sfjueyu_types = #{params.sfjueyuTypes}
+            </if>
+
+            <if test="params.zaikuquanTypes != null">
+                and zaikuquan.zaikuquan_types = #{params.zaikuquanTypes}
+            </if>
+
+            <if test=" params.zaikuquanContent != '' and params.zaikuquanContent != null and params.zaikuquanContent != 'null' ">
+                and zaikuquan.zaikuquan_content like CONCAT('%',#{params.zaikuquanContent},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.LingyanghuifangDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.lingyanghuifang_name as lingyanghuifangName
+        ,a.lingyanghuifang_dog_bianhao as lingyanghuifangDogBianhao
+        ,a.lingyanghuifang_photo as lingyanghuifangPhoto
+        ,a.lingyanghuifang_content as lingyanghuifangContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.LingyanghuifangView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM lingyanghuifang  a
+
+        <where>
+            <if test=" params.lingyanghuifangName != '' and params.lingyanghuifangName != null and params.lingyanghuifangName != 'null' ">
+                and a.lingyanghuifang_name like CONCAT('%',#{params.lingyanghuifangName},'%')
+            </if>
+            <if test=" params.lingyanghuifangDogBianhao != '' and params.lingyanghuifangDogBianhao != null and params.lingyanghuifangDogBianhao != 'null' ">
+                and a.lingyanghuifang_dog_bianhao like CONCAT('%',#{params.lingyanghuifangDogBianhao},'%')
+            </if>
+            <if test=" params.lingyanghuifangContent != '' and params.lingyanghuifangContent != null and params.lingyanghuifangContent != 'null' ">
+                and a.lingyanghuifang_content like CONCAT('%',#{params.lingyanghuifangContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
